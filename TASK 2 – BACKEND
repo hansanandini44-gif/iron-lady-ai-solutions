@@ -1,0 +1,24 @@
+import express from "express";
+import cors from "cors";
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+let leads = [];
+
+app.get("/leads", (req, res) => res.json(leads));
+
+app.post("/leads", (req, res) => {
+  leads.push(req.body);
+  res.json({ message: "Lead added" });
+});
+
+app.delete("/leads/:index", (req, res) => {
+  leads.splice(req.params.index, 1);
+  res.json({ message: "Lead removed" });
+});
+
+app.listen(6000, () => {
+  console.log("Task 2 backend running on port 6000");
+});
