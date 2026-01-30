@@ -1,0 +1,47 @@
+import { useEffect, useState } from "react";
+
+function App() {
+  const [name, setName] = useState("");
+  const [leads, setLeads] = useState([]);
+
+  const loadLeads = async () => {
+    const res = await fetch("http://localhost:6000/leads");
+    setLeads(await res.json());
+  };
+
+  const addLead = async () => {
+    await fetch("http://localhost:6000/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
+    setName("");
+    loadLeads();
+  };
+
+  const deleteLead = async (i) => {
+    await fetch(`http://localhost:6000/leads/${i}`, { method: "DELETE" });
+    loadLeads();
+  };
+
+  useEffect(() => {
+    loadLeads();
+  }, []);
+
+  return (
+    <div style={{ padding: 30 }}>
+      <h2>Lead Management</h2>
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <button onClick={addLead}>Add Lead</button>
+
+      {leads.map((l, i) => (
+        <div key={i}>
+          {l.name}
+          <button onClick={() => deleteLead(i)}>Delete</button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default App;
